@@ -136,7 +136,11 @@
 
       },
 
-      _updateTabSelection: function(e) {
+      observers: [
+        '_handleUrlUpdate(programmeDocumentDetailsUrl, location)',
+      ],
+
+      _updateTabSelection: function() {
         this.$.tabContent.select(this.pdTab);
       },
 
@@ -152,14 +156,18 @@
         return App.Endpoints.programmeDocumentDetail(location, pdId);
       },
 
-      attached: function(){
-        var self = this;
+      _handleUrlUpdate: function(_, _) { // jshint ignore:line
+        if(this.location){
+          var self = this;
 
-        this.$.programmeDocumentDetails.thunk()()
-          .then(function (res) {
-            self.pd = res.data;
-            self.loaded = true;
-          })
+          this.$.programmeDocumentDetails.thunk()()
+            .then(function (res) {
+              self.pd = res.data;
+              self.loaded = true;
+            })
+        } else{
+          return false;
+        }
       }
 
     });
