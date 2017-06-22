@@ -5,15 +5,18 @@
 <link rel="import" href="../../../bower_components/etools-content-panel/etools-content-panel.html">
 <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../ip-reporting/ip-reporting-indicator-details.html">
+<link rel="import" href="../etools-prp-data-table-row.html">
+<link rel="import" href="../../styles/table-styles.html">
+
 <link rel="import" href="../../behaviors/utils.html">
 <link rel="import" href="../report-status.html">
 <link rel="import" href="../labelled-item.html">
-<link rel="import" href="indicator-details.html">
 
 <dom-module id="pd-output">
   <template>
-    <style include="iron-flex iron-flex-factors">
-      :host {
+    <style include="iron-flex iron-flex-factors data-table-styles table-styles">
+      /*:host {
         display: block;
         margin-bottom: 25px;
 
@@ -83,7 +86,7 @@
 
       .indicator-header__toggle {
         padding-left: 20px;
-      }
+      }*/
     </style>
 
     <etools-content-panel panel-title="[[data.name]]">
@@ -102,43 +105,41 @@
           is="dom-repeat"
           items="[[data.indicator_reports]]"
           as="indicator">
-        <div class="indicator">
-          <div class="indicator-header layout horizontal">
-            <div class="indicator-header__title flex-3 layout vertical center-justified">
-              <div class="layout horizontal">
-                <div class="status-badge layout vertical center-justified">
-                  <status-badge type="success"></status-badge>
-                </div>
-                <h3>[[indicator.indicator_name]]</h3>
-              </div>
-            </div>
-            <div class="indicator-header__target flex-none layout vertical center-justified">
-              <dl class="layout horizontal justified">
-                <dt class="flex-3">Target:</dt>
-                <dd class="flex">[[_withDefault(indicator.target)]]</dd>
-              </dl>
-              <dl class="layout horizontal justified">
-                <dt class="flex-3">Achievement in reporting period:</dt>
-                <dd class="flex">[[_withDefault(indicator.achieved)]]</dd>
-              </dl>
-            </div>
-            <div class="indicator-header__toggle layout vertical center-justified">
-              <paper-icon-button
-                  on-tap="_toggle"
-                  toggles="[[index]]"
-                  icon="icons:expand-[[_computeIcon(indicator.opened)]]">
-              </paper-icon-button>
-            </div>
-          </div>
 
-          <iron-collapse
-              id="collapse-[[index]]"
-              opened="{{indicator.opened}}"
-              on-opened-changed="_handleOpenedChanged"
-              no-animation>
-            <indicator-details></indicator-details>
-          </iron-collapse>
-        </div>
+          <etools-prp-data-table-row details-opened="{{detailsOpened}}">
+            <div slot="row-data">
+              <div class="indicator-header layout horizontal">
+
+                <!-- <div class="indicator-header__title flex-3 layout vertical center-justified">
+                  <div class="layout horizontal"> -->
+                    <div class="status-badge layout vertical center-justified">
+                      <status-badge type="success"></status-badge>
+                    </div>
+                    <h3>[[indicator.indicator_name]]</h3>
+                  <!-- </div>
+                </div> -->
+
+                <!-- <div class="indicator-header__target flex-none layout vertical center-justified"> -->
+                  <!-- <dl class="layout horizontal justified">
+                    <dt class="flex-3">Target:</dt>
+                    <dd class="flex">[[_withDefault(indicator.target)]]</dd>
+                  </dl>
+
+                  <dl class="layout horizontal justified">
+                    <dt class="flex-3">Achievement in reporting period:</dt>
+                    <dd class="flex">[[_withDefault(indicator.achieved)]]</dd>
+                  </dl> -->
+                <!-- </div> -->
+
+            </div>
+            <div slot="row-data-details">
+              <ip-reporting-indicator-details indicator-id="[[data.id]]"
+                                              limit=1
+                                              is-open="[[detailsOpened]]">
+              </ip-reporting-indicator-details>
+            </div>
+          </etools-prp-data-table-row>
+
       </template>
     </etools-content-panel>
   </template>
@@ -152,23 +153,14 @@
       ],
 
       properties: {
+        indicator: Object,
+
         data: Object,
-      },
 
-      _toggle: function (e) {
-        this.$$('#collapse-' + e.target.toggles).toggle();
-      },
-
-      _computeIcon: function (opened) {
-        return opened ? 'less' : 'more';
-      },
-
-      _handleOpenedChanged: function (e, data) {
-        e.stopPropagation();
-
-        if (data.value) {
-          Polymer.dom(e.srcElement).querySelector('indicator-details').init();
-        }
+        detailsOpened: {
+          type: Boolean,
+          value: false
+        },
       },
     });
   </script>

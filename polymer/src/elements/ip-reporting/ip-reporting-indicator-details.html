@@ -132,6 +132,11 @@
           value: []
         },
 
+        limit: {
+          type: Number,
+          value: 2
+        },
+
         dataDict: {
           type: Object,
           statePath: 'indicators.details'
@@ -148,7 +153,8 @@
       ],
 
       _computeIndicatorReportsUrl: function(indicatorId) {
-        return App.Endpoints.indicatorReports(indicatorId) + '?limit=2';
+        var baseUrl =  App.Endpoints.indicatorReports(indicatorId);
+        return baseUrl + '?limit=' + this.limit;
       },
 
       _bucketByLocation: function(data) {
